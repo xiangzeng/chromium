@@ -13,7 +13,7 @@ show() {
 }
 
 # 检查是否以 root 用户身份运行脚本
-if [ "$EUID" -ne 0 ]; then
+if [ "$EUID" -ne 0 ];then
     show "请使用 sudo 或以 root 用户身份运行此脚本。"
     exit
 fi
@@ -115,7 +115,7 @@ main_menu() {
     while true; do
         clear  # 清屏以只显示 logo 和菜单
         # 显示 Logo
-        curl -s https://raw.githubusercontent.com/sdohuajia/Hyperlane/refs/heads/main/logo.sh | bash
+        curl -s https://raw.githubusercontent.com/ziqing888/logo.sh/main/logo.sh | bash
         sleep 1  # 显示 Logo 之后稍作停留
         
         # 显示主菜单
