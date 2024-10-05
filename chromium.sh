@@ -7,20 +7,9 @@ SCRIPT_PATH="$HOME/Linux.sh"
 curl -s https://raw.githubusercontent.com/ziqing888/logo.sh/main/logo.sh | bash
 sleep 3
 
-# 显示函数
-show() {
-    echo -e "\033[1;34m$1\033[0m"
-}
-
-# 检查是否以 root 用户身份运行脚本
-if [ "$EUID" -ne 0 ];then
-    show "请使用 sudo 或以 root 用户身份运行此脚本。"
-    exit
-fi
-
-# 1. 安装 Docker
-install_docker() {
-    show "正在安装 Docker..."
+# 检查 Docker 是否已安装
+if ! command -v docker &> /dev/null; then
+    echo "Docker 未安装，正在安装..."
     
     # 更新系统
     sudo apt update -y && sudo apt upgrade -y
@@ -49,30 +38,26 @@ install_docker() {
 
     # 检查 Docker 版本
     docker --version
-    show "Docker 安装完成。"
-}
+else
+    echo "Docker 已安装，版本为: $(docker --version)"
+fi
 
-# 2. 检查时区
-check_timezone() {
-    show "正在检查时区..."
-    relative_path=$(realpath --relative-to=/usr/share/zoneinfo /etc/localtime)
-    show "当前系统时区的相对路径为: $relative_path"
-}
+# 获取相对路径
+relative_path=$(realpath --relative-to=/usr/share/zoneinfo /etc/localtime)
+echo "相对路径为: $relative_path"
 
-# 3. 安装并配置 Chromium 容器
-setup_chromium() {
-    # 创建 chromium 目录并进入
-    mkdir -p $HOME/chromium
-    cd $HOME/chromium
-    show "已进入 chromium 目录"
+# 创建 chromium 目录并进入
+mkdir -p $HOME/chromium
+cd $HOME/chromium
+echo "已进入 chromium 目录"
 
-    # 获取用户输入
-    read -p "请输入 CUSTOM_USER: " CUSTOM_USER
-    read -sp "请输入 PASSWORD: " PASSWORD
-    echo
+# 获取用户输入
+read -p "请输入 CUSTOM_USER: " CUSTOM_USER
+read -sp "请输入 PASSWORD: " PASSWORD
+echo
 
-    # 创建 docker-compose.yaml 文件
-    cat <<EOF > docker-compose.yaml
+# 创建 docker-compose.yaml 文件
+cat <<EOF > docker-compose.yaml
 ---
 services:
   chromium:
@@ -96,47 +81,10 @@ services:
     restart: unless-stopped
 EOF
 
-    show "docker-compose.yaml 文件已创建，内容已导入。"
+echo "docker-compose.yaml 文件已创建，内容已导入。"
 
-    # 启动 Docker Compose
-    docker compose up -d
-    show "Docker Compose 已启动，Chromium 容器正在运行。"
-}
+# 启动 Docker Compose
+docker compose up -d
+echo "Docker Compose 已启动。"
 
-# 4. 停止并删除 Chromium 容器
-stop_and_remove_chromium() {
-    show "正在停止并删除 Chromium 容器..."
-    docker compose down
-    show "Chromium 容器已停止并删除。"
-}
-
-# 主菜单
-main_menu() {
-    while true; do
-        clear  # 清屏以只显示 logo 和菜单
-        # 显示 Logo
-        curl -s https://raw.githubusercontent.com/ziqing888/logo.sh/main/logo.sh | bash
-        sleep 1  # 显示 Logo 之后稍作停留
-        
-        # 显示主菜单
-        show "请选择操作："
-        echo "1) 安装 Docker"
-        echo "2) 检查时区"
-        echo "3) 安装并配置 Chromium 容器"
-        echo "4) 停止并删除 Chromium 容器"
-        echo "5) 退出"
-        read -p "请输入选择 (1-5): " choice
-        
-        case $choice in
-            1) install_docker ;;
-            2) check_timezone ;;
-            3) setup_chromium ;;
-            4) stop_and_remove_chromium ;;
-            5) exit 0 ;;
-            *) show "无效的选择，请重新输入。" ;;
-        esac
-    done
-}
-
-# 运行主菜单
-main_menu
+echo "部署完成，请打开浏览器操作。"
