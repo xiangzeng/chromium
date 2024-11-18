@@ -3,9 +3,6 @@
 # 脚本保存路径
 SCRIPT_PATH="$HOME/Linux.sh"
 
-# 显示 Logo
-curl -s https://raw.githubusercontent.com/ziqing888/logo.sh/main/logo.sh | bash
-sleep 3
 
 # 检查 Docker 是否已安装
 if ! command -v docker &> /dev/null; then
@@ -75,7 +72,7 @@ services:
     volumes:
       - /root/chromium/config:/config
     ports:
-      - 3010:3000   #Change 3010 to your favorite port if needed
+      - 80:3000   #Change 3010 to your favorite port if needed
       - 3011:3001   #Change 3011 to your favorite port if needed
     shm_size: "1gb"
     restart: unless-stopped
