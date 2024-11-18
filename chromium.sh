@@ -48,9 +48,19 @@ mkdir -p $HOME/chromium
 cd $HOME/chromium
 echo "已进入 chromium 目录"
 
-# 获取用户输入
-read -p "请输入 CUSTOM_USER: " CUSTOM_USER
-read -sp "请输入 PASSWORD: " PASSWORD
+# 获取命令行参数
+CUSTOM_USER=$1
+PASSWORD=$2
+
+# 如果命令行参数未提供，则请求用户输入
+if [ -z "$CUSTOM_USER" ]; then
+    read -p "请输入 CUSTOM_USER: " CUSTOM_USER
+fi
+
+if [ -z "$PASSWORD" ]; then
+    read -sp "请输入 PASSWORD: " PASSWORD
+    echo
+fi
 echo
 
 # 创建 docker-compose.yaml 文件
