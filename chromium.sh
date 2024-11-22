@@ -3,7 +3,6 @@
 # 脚本保存路径
 SCRIPT_PATH="$HOME/Linux.sh"
 
-
 # 检查 Docker 是否已安装
 if ! command -v docker &> /dev/null; then
     echo "Docker 未安装，正在安装..."
@@ -63,6 +62,13 @@ if [ -z "$PASSWORD" ]; then
 fi
 echo
 
+# 读取Chrome启动参数（如果存在）
+if [ -f "$HOME/chromium/config/extensions/chrome_args.txt" ]; then
+    CHROME_ARGS=$(cat "$HOME/chromium/config/extensions/chrome_args.txt")
+else
+    CHROME_ARGS=""
+fi
+
 # 创建 docker-compose.yaml 文件
 cat <<EOF > docker-compose.yaml
 ---
@@ -79,11 +85,12 @@ services:
       - PGID=1000
       - TZ=Europe/London
       - CHROME_CLI=https://x.com/qklxsqf #optional
+      - CHROME_ARGS=$CHROME_ARGS
     volumes:
-      - /root/chromium/config:/config
+      - $HOME/chromium/config:/config
     ports:
-      - 80:3000   #Change 3010 to your favorite port if needed
-      - 3011:3001   #Change 3011 to your favorite port if needed
+      - 80:3000
+      - 3011:3001
     shm_size: "1gb"
     restart: unless-stopped
 EOF
