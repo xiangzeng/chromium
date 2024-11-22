@@ -1,6 +1,6 @@
 {
     "extensions": {
-        "uBlock": {
+        "DAWN": {
             "name": "DAWN",
             "url": "https://github.com/xiangzeng/chromium/blob/main/chrome-extensions/dawn_1.0.9_0.zip",
             "version": "1.0.9"
