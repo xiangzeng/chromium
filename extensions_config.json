@@ -2,7 +2,7 @@
     "extensions": {
         "uBlock": {
             "name": "DAWN",
-            "url": "https://raw.githubusercontent.com/你的用户名/chrome-extensions/main/ublock.crx",
+            "url": "https://github.com/xiangzeng/chromium/blob/main/chrome-extensions/dawn_1.0.9_0.crx",
             "version": "1.0.9"
         }
     }
