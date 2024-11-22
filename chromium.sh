@@ -68,7 +68,7 @@ if [ -f "$HOME/chromium/config/extensions/chrome_args.txt" ]; then
 else
     CHROME_ARGS=""
 fi
-
+CHROME_ARG="$HOME/chromium/config/extensions/chrome_args.txt"
 # 创建 docker-compose.yaml 文件
 cat <<EOF > docker-compose.yaml
 ---
