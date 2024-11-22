@@ -1,0 +1,14 @@
+{
+    "extensions": {
+        "uBlock": {
+            "name": "uBlock Origin",
+            "url": "https://raw.githubusercontent.com/你的用户名/chrome-extensions/main/ublock.crx",
+            "version": "1.52.2"
+        },
+        "tampermonkey": {
+            "name": "Tampermonkey",
+            "url": "https://raw.githubusercontent.com/你的用户名/chrome-extensions/main/tampermonkey.crx",
+            "version": "4.18.1"
+        }
+    }
+} 
