@@ -25,7 +25,7 @@ def download_extension(name, ext_info, extensions_dir):
         final_dir = os.path.join(extensions_dir, name)
         os.makedirs(temp_dir, exist_ok=True)
         
-        crx_path = os.path.join(temp_dir, f"{name}.crx")
+        zip_path = os.path.join(temp_dir, f"{name}.zip")
         
         # 检查版本
         current_version_file = os.path.join(final_dir, '.version')
@@ -43,7 +43,7 @@ def download_extension(name, ext_info, extensions_dir):
         
         # 使用wget下载文件
         try:
-            subprocess.run(['wget', '-O', crx_path, ext_info['url']], check=True)
+            subprocess.run(['wget', '-O', zip_path, ext_info['url']], check=True)
         except subprocess.CalledProcessError as e:
             print(f"下载失败: {e}")
             return False
@@ -51,30 +51,10 @@ def download_extension(name, ext_info, extensions_dir):
         try:
             if os.path.exists(final_dir):
                 shutil.rmtree(final_dir)
-            
-            # 处理crx文件
-            with open(crx_path, 'rb') as f:
-                # 跳过CRX头部
-                magic = f.read(4)
-                if magic != b'Cr24':  # 检查是否是有效的CRX文件
-                    print(f"错误：不是有效的CRX文件")
-                    return False
                 
-                version = int.from_bytes(f.read(4), byteorder='little')
-                public_key_length = int.from_bytes(f.read(4), byteorder='little')
-                signature_length = int.from_bytes(f.read(4), byteorder='little')
-                
-                # 跳过公钥和签名
-                f.seek(public_key_length + signature_length, 1)
-                
-                # 将剩余内容写入临时zip文件
-                zip_path = os.path.join(temp_dir, "temp.zip")
-                with open(zip_path, 'wb') as zip_file:
-                    zip_file.write(f.read())
-                
-                # 解压处理后的zip文件
-                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                    zip_ref.extractall(final_dir)
+            # 直接解压zip文件
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(final_dir)
             
             # 保存版本信息
             with open(current_version_file, 'w') as f:
