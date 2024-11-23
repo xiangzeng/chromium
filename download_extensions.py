@@ -185,12 +185,21 @@ def main():
     extension_paths = get_extension_paths(extensions_dir)
     if extension_paths:
         chrome_args = (
+            "--no-sandbox "
+            "--disable-gpu "
+            "--disable-dev-shm-usage "
             "--enable-features=Extensions,ChromeExtensions "
             "--force-dev-mode-highlighting "
             "--disable-extensions-http-throttling "
             "--enable-extension-activity-logging "
             "--no-default-browser-check "
             "--allow-legacy-extension-manifests "
+            "--disable-web-security "
+            "--user-data-dir=/config "
+            "--enable-experimental-extension-apis "
+            "--enable-extension-apps "
+            "--enable-extension-service-worker-scripts "
+            "--extensions-on-chrome-urls "
             "--load-extension=" + ",".join(extension_paths)
         )
         chrome_args = chrome_args.strip()
