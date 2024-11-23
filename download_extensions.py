@@ -75,8 +75,12 @@ def get_extension_paths(extensions_dir):
     """获取所有已安装扩展的路径"""
     paths = []
     for ext_dir in os.listdir(extensions_dir):
-        if os.path.isdir(os.path.join(extensions_dir, ext_dir)) and ext_dir != 'temp':
-            paths.append(f"/config/extensions/{ext_dir}")
+        ext_path = os.path.join(extensions_dir, ext_dir)
+        # 只处理目录，排除临时目录和文件
+        if os.path.isdir(ext_path) and ext_dir not in ['temp', '.', '..']:
+            # 确保路径格式正确，不包含额外字符
+            clean_path = f"/config/extensions/{ext_dir}"
+            paths.append(clean_path)
     return paths
 
 def restart_chrome_container():
@@ -156,10 +160,16 @@ def main():
     
     # 更新Chrome启动参数
     extension_paths = get_extension_paths(extensions_dir)
-    chrome_args = "--load-extension=" + ",".join(extension_paths)
-    
-    with open(os.path.join(extensions_dir, 'chrome_args.txt'), 'w') as f:
-        f.write(chrome_args)
+    if extension_paths:
+        chrome_args = "--load-extension=" + ",".join(extension_paths)
+        # 确保没有多余的字符
+        chrome_args = chrome_args.strip()
+        
+        with open(os.path.join(extensions_dir, 'chrome_args.txt'), 'w') as f:
+            f.write(chrome_args)
+            # 确保文件末尾没有多余的换行
+            if not chrome_args.endswith('\n'):
+                f.write('\n')
 
     print(f"\n检查完成：")
     print(f"总共检查了 {len(extensions)} 个扩展")
