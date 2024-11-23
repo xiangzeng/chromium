@@ -102,7 +102,7 @@ def restart_chrome_container():
         return False
 
 def setup_directories():
-    """只在目录不存��时创建必要的目录结构"""
+    """只在目录不存在时创建必要的目录结构"""
     home_dir = os.path.expanduser('~')
     chromium_dir = os.path.join(home_dir, 'chromium')
     config_dir = os.path.join(chromium_dir, 'config')
@@ -116,6 +116,29 @@ def setup_directories():
         print(f"使用现有目录: {extensions_dir}")
     
     return extensions_dir
+
+def update_docker_compose(chrome_args):
+    """直接更新docker-compose.yaml文件中的CHROME_ARGS"""
+    try:
+        compose_file = '/root/chromium/docker-compose.yaml'
+        with open(compose_file, 'r') as f:
+            compose_content = f.readlines()
+        
+        # 更新CHROME_ARGS行
+        for i, line in enumerate(compose_content):
+            if 'CHROME_ARGS' in line:
+                compose_content[i] = f'      - CHROME_ARGS="{chrome_args}"\n'
+                break
+        
+        # 写回文件
+        with open(compose_file, 'w') as f:
+            f.writelines(compose_content)
+        
+        print("已更新 docker-compose.yaml")
+        return True
+    except Exception as e:
+        print(f"更新docker-compose.yaml失败: {e}")
+        return False
 
 def main():
     # 设置目录结构
@@ -161,34 +184,33 @@ def main():
     # 更新Chrome启动参数
     extension_paths = get_extension_paths(extensions_dir)
     if extension_paths:
-        # 添加完整的开发者模式和插件支持的启动参数
         chrome_args = (
             "--enable-features=Extensions,ChromeExtensions "
-            "--force-dev-mode-highlighting "  # 强制开发者模式
-            "--disable-extensions-http-throttling "  # 禁用扩展HTTP限制
-            "--enable-extension-activity-logging "  # 启用扩展活动日志
-            "--no-default-browser-check "  # 不检查默认浏览器
-            "--allow-legacy-extension-manifests "  # 允许旧版manifest
+            "--force-dev-mode-highlighting "
+            "--disable-extensions-http-throttling "
+            "--enable-extension-activity-logging "
+            "--no-default-browser-check "
+            "--allow-legacy-extension-manifests "
             "--load-extension=" + ",".join(extension_paths)
         )
         chrome_args = chrome_args.strip()
         
-        with open(os.path.join(extensions_dir, 'chrome_args.txt'), 'w') as f:
-            f.write(chrome_args)
-            if not chrome_args.endswith('\n'):
-                f.write('\n')
-
+        # 直接更新docker-compose.yaml
+        if update_docker_compose(chrome_args):
+            print("Chrome启动参数已更新")
+            
+            # 重启容器
+            if update_count > 0 or removed_count > 0:
+                print("\n正在重启Chrome以应用更改...")
+                restart_chrome_container()
+    
+    # 添加统计信息
     print(f"\n检查完成：")
     print(f"总共检查了 {len(extensions)} 个扩展")
     print(f"成功处理 {success_count} 个")
     print(f"更新了 {update_count} 个")
     print(f"删除了 {removed_count} 个")
     print(f"Chrome启动参数已更新")
-
-    # 只有在有更新或删除时才重启容器
-    if update_count > 0 or removed_count > 0:
-        print("\n正在重启Chrome以应用更改...")
-        restart_chrome_container()
 
 if __name__ == "__main__":
     main() 
