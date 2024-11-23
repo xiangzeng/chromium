@@ -161,13 +161,12 @@ def main():
     # 更新Chrome启动参数
     extension_paths = get_extension_paths(extensions_dir)
     if extension_paths:
-        chrome_args = "--load-extension=" + ",".join(extension_paths)
-        # 确保没有多余的字符
+        # 添加开发者模式和插件支持的启动参数
+        chrome_args = "--enable-features=Extensions,ChromeExtensions --load-extension=" + ",".join(extension_paths)
         chrome_args = chrome_args.strip()
         
         with open(os.path.join(extensions_dir, 'chrome_args.txt'), 'w') as f:
             f.write(chrome_args)
-            # 确保文件末尾没有多余的换行
             if not chrome_args.endswith('\n'):
                 f.write('\n')
 
