@@ -3,7 +3,7 @@
         "DAWN": {
             "name": "DAWN",
             "url": "https://github.com/xiangzeng/chromium/raw/refs/heads/main/chrome-extensions/dawn_1.0.9_0.zip",
-            "version": "1.1.1"
+            "version": "1.1.2"
         }
     }
 } 
