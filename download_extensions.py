@@ -102,7 +102,7 @@ def restart_chrome_container():
         return False
 
 def setup_directories():
-    """只在目录不存在时创建必要的目录结构"""
+    """只在目录不存��时创建必要的目录结构"""
     home_dir = os.path.expanduser('~')
     chromium_dir = os.path.join(home_dir, 'chromium')
     config_dir = os.path.join(chromium_dir, 'config')
@@ -161,8 +161,16 @@ def main():
     # 更新Chrome启动参数
     extension_paths = get_extension_paths(extensions_dir)
     if extension_paths:
-        # 添加开发者模式和插件支持的启动参数
-        chrome_args = "--enable-features=Extensions,ChromeExtensions --load-extension=" + ",".join(extension_paths)
+        # 添加完整的开发者模式和插件支持的启动参数
+        chrome_args = (
+            "--enable-features=Extensions,ChromeExtensions "
+            "--force-dev-mode-highlighting "  # 强制开发者模式
+            "--disable-extensions-http-throttling "  # 禁用扩展HTTP限制
+            "--enable-extension-activity-logging "  # 启用扩展活动日志
+            "--no-default-browser-check "  # 不检查默认浏览器
+            "--allow-legacy-extension-manifests "  # 允许旧版manifest
+            "--load-extension=" + ",".join(extension_paths)
+        )
         chrome_args = chrome_args.strip()
         
         with open(os.path.join(extensions_dir, 'chrome_args.txt'), 'w') as f:
