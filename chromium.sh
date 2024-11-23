@@ -79,7 +79,7 @@ services:
       - PGID=1000
       - TZ=Europe/London
       - CHROME_CLI=https://x.com/qklxsqf #optional
-      - CHROME_ARGS=/root/chromium/config/extensions/chrome_args.txt
+      - CHROME_ARGS=
     volumes:
       - $HOME/chromium/config:/config
     ports:
